@@ -1,0 +1,46 @@
+node server         --> executa o servidor backend
+
+Em server: 
+
+    npm init
+
+    package name: namegator-server
+
+    Teclar enter para as demais opções!
+
+Obs.: com isso, foi criado um package.json em server.
+
+Crias as dependências:
+
+    npm install apollo-server --save    --> biblioteca para se utilizar o graphql no projeto
+
+    npm install graphql --save
+
+Na pasta server, testar: node server    --> aparecerá a descrição da Function construtora AplolloServer
+
+É preciso a definiçao do schema
+    Definimos o type de dado (criamos duas entidades - Item e Query)
+    Definimos a query
+
+Além dos resolvers
+
+Obs.: Foi instalado o software GraphQl PlayGround
+    Iniciando:
+        Selecionar URL ENDPOINT
+            http://localhost:4000
+
+        Obs.: A partir disto, podemos testar nossa API com o que está definido em server.js
+
+Como utilizar no frontend:
+    Importar uma biblioteca para se fazer requisições http de forma assíncrona.
+    Em client, instalar:
+        npm install axios --save
+
+    Em DomainsList.vue, fazer a importação do axios para acessar o backend.
+
+Como enviar dados para o backend:
+    os envios serão feitos através das Mutation definidas em server.js
+
+
+Para verificar se um determinado domínio está disponível (DNS), vamos utilizar
+um pacote do NODE chamado DNS, importando-o em server.js

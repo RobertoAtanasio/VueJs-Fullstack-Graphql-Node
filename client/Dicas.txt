@@ -1,0 +1,38 @@
+Caso exista algum processo executando na porta 8080, segue os comando para excluir o processo.
+Abrir o CMD com opção de administrador:
+
+	netstat -ano | findstr 8080
+
+	taskkill /F /pid 3744
+-----------------------------------------------------------------------------------------------
+
+npm run serve       -> executar sistema
+
+npm install bootstrap --save
+npm install font-awesome --save
+
+Foi configurado o package.json para:
+    "rules": {
+      "quotes": ["error", "double"],
+      "indent": ["error", "tab"],
+      "semi": ["error", "always"]
+    },
+
+npm run lint    --> executa a autocorreção do código
+
+Incluído no file/preferences/settings.json:
+    "eslint.validate": [
+        {
+            "language": "vue",
+            "autoFix": false
+        },
+        {
+            "language": "javascript",
+            "autoFix": false
+        },
+    ]
+
+
+//--- Gera produção:
+
+npm run build
