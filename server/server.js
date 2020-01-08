@@ -25,7 +25,8 @@ const typeDefs = `
     }
 
     type Domain {
-		name: String
+        name: String
+        extension: String
 		checkout: String
 		available: Boolean
 	}
@@ -43,6 +44,7 @@ const typeDefs = `
         saveItem (item: ItemInput): Item
         deleteItem (id: Int): Boolean
         generateDomains: [Domain]
+        generateDomain (name: String): [Domain]
     }
 
 `;
@@ -84,7 +86,6 @@ const isDomainAvailable = function (url) {
 	});
 };
 
-
 const resolvers = {
     Query: {
         items(_, args) {
@@ -110,6 +111,7 @@ const resolvers = {
         },
         // como existe o await dentro da função, é necessário marcar a função como async
         async generateDomains() {
+            // console.log("generateDomains");
             const domains = [];
 			for (const prefix of items.filter(item => item.type === "prefixos")) {
 				for (const suffix of items.filter(item => item.type === "sufixos")) {
@@ -125,7 +127,24 @@ const resolvers = {
 				}
 			}
 			return domains;
-        }
+        },
+        async generateDomain(_, args) {
+            const name = args.name;
+			const domains = [];
+			const extensions = [".com.br", ".com", ".net", ".org"];
+			for (const extension of extensions) {
+				const url = name.toLowerCase();
+				const checkout = `https://checkout.hostgator.com.br/?a=add&sld=${url}&tld=${extension}`;
+				const available = await isDomainAvailable(`${url}${extension}`);
+				domains.push({
+					name,
+					extension,
+					checkout,
+					available
+				});
+			}
+			return domains;
+		}
     }
 }
 

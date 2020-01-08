@@ -10,6 +10,8 @@ npm run serve       -> executar sistema
 
 npm install bootstrap --save
 npm install font-awesome --save
+npm install vue-router --save
+npm install vuex --save
 
 Foi configurado o package.json para:
     "rules": {
@@ -31,6 +33,7 @@ Incluído no file/preferences/settings.json:
             "autoFix": false
         },
     ]
+
 
 
 //--- Gera produção:

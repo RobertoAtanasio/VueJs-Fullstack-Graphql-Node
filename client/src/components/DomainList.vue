@@ -44,6 +44,9 @@
                     <a class="btn btn-info" v-bind:href="domain.checkout" target="_blank">
                       <span class="fa fa-shopping-cart"></span>
                     </a>
+                    <button class="btn btn-info ml-2" @click="openDomain(domain)">
+                      <span class="fa fa-search"></span>
+                    </button>
                   </div>
                 </div>
               </li>
@@ -56,73 +59,54 @@
 </template>
 
 <script>
-import axios from "axios/dist/axios";
+// import axios from "axios/dist/axios";
+import { mapState, mapActions } from 'vuex';
 import AppItemList from "./AppItemList";
-import { baseApiUrl } from "@/global.js";
+// import { baseApiUrl } from "@/global.js";
 
 export default {
   name: "DomainList",
   components: { AppItemList },
   data() {
     return {
-      items: {
-        prefixos: [],
-        sufixos: []
-      },
-      domains: []   // uma vez que foi retirada a computed domains() teremos que defini-la aqui
-      // prefixos: [],
-      // sufixos: []
-      // prefixos: ["Air", "Jet", "Flight"],
-      // sufixos: ["Hub", "Station", "Mart"]
+      // items: {
+      //   prefixos: [],
+      //   sufixos: []
+      // },
+      // domains: []   // uma vez que foi retirada a computed domains() teremos que defini-la aqui
     };
   },
   methods: {
-    addItem(item) {
-      // this.items.prefixos.push(prefixo);
-
-      // o item tem o seguinte formato agora (ver em AppitemList.vue):
-      // {
-      //   type,
-      //   description
-      // }
-
-      axios({
-        url: baseApiUrl,
-        method: "post",
-        data: {
-          query: `
-            mutation ($item: ItemInput) {
-              newItem: saveItem(item: $item) {
-                id
-                type
-                description
-              }
-            } 
-          `,
-          variables: {
-            item
-          }
-        }
-      }).then( response => {
-        // this.getPrefixos();
-        // Da forma abaixo evita uma nova chamada ao servidor!
-        const query = response.data;
-        const newItem = query.data.newItem;
-        // // eslint-disable-next-line
-        // console.log(newPrefixo);
-        this.items[item.type].push(newItem);
-        this.generateDomains();
+    ...mapActions(["addItem", "deleteItem", "getItems", "generateDomains"]),
+    openDomain(domain) {
+      this.$router.push({
+        path: `/domains/${domain.name}`
       });
     },
-    // addPrefixo(prefixo) {
-    //   // this.items.prefixos.push(prefixo);
+
+    // o mapActions acima substitui as definições abaixo
+
+    // addItem(item) {
+    //   this.$store.dispatch("addItem", item);      // invoca a actions em store.js
+    // },
+    // deleteItem(item) {
+    //   this.$store.dispatch("deleteItem", item);
+    // },
+    // getItems(type) {
+    //   this.$store.dispatch("getItems", type);
+    // },
+    // generateDomains() {
+    //   this.$store.dispatch("generateDomains");
+    // },
+
+    // addItem(item) {
     //   axios({
     //     url: baseApiUrl,
     //     method: "post",
     //     data: {
     //       query: `
     //         mutation ($item: ItemInput) {
-    //           newPrefixo: saveItem(item: $item) {
+    //           newItem: saveItem(item: $item) {
     //             id
     //             type
     //             description
@@ -130,76 +114,21 @@ export default {
     //         } 
     //       `,
     //       variables: {
-    //         item: {
-    //           type: "prefixos",
-    //           description: prefixo
-    //         }
+    //         item
     //       }
     //     }
     //   }).then( response => {
     //     // this.getPrefixos();
     //     // Da forma abaixo evita uma nova chamada ao servidor!
     //     const query = response.data;
-    //     const newPrefixo = query.data.newPrefixo;
+    //     const newItem = query.data.newItem;
     //     // // eslint-disable-next-line
     //     // console.log(newPrefixo);
-    //     this.items.prefixos.push(newPrefixo);
+    //     this.items[item.type].push(newItem);
+    //     this.generateDomains();
     //   });
     // },
-    // addSufixo(sufixo) {
-    //   // this.items.sufixos.push(sufixo);
-    //   axios({
-    //     url: baseApiUrl,
-    //     method: "post",
-    //     data: {
-    //       query: `
-    //         mutation ($item: ItemInput) {
-    //           newSufixo: saveItem(item: $item) {
-    //             id
-    //             type
-    //             description
-    //           }
-    //         } 
-    //       `,
-    //       variables: {
-    //         item: {
-    //           type: "sufixos",
-    //           description: sufixo
-    //         }
-    //       }
-    //     }
-    //   }).then( response => {
-    //     const query = response.data;
-    //     const newSufixo = query.data.newSufixo;
-    //     this.items.sufixos.push(newSufixo);
-    //   });
-    // },
-    deleteItem(item) {
-      // this.items.prefixos.splice(this.prefixos.indexOf(prefixo), 1);
-
-      // o deleteItem retorna um Boolean, logo não tem objeto associado.
-      axios({
-        url: baseApiUrl,
-        method: "post",
-        data: {
-          query: `
-            mutation ($id: Int) {
-              deleted: deleteItem(id: $id) 
-            } 
-          `,
-          variables: {
-            id: item.item.id
-          }
-        }
-      }).then( () => {
-        // this.getPrefixos();
-        // this.getItems(item.type);
-        this.items[item.type].splice(
-          this.items[item.type].indexOf(item), 1);
-        this.generateDomains();
-      });
-    },
-    // deletePrefixo(prefixo) {
+    // deleteItem(item) {
     //   // this.items.prefixos.splice(this.prefixos.indexOf(prefixo), 1);
 
     //   // o deleteItem retorna um Boolean, logo não tem objeto associado.
@@ -213,143 +142,77 @@ export default {
     //         } 
     //       `,
     //       variables: {
-    //         id: prefixo.id
+    //         id: item.item.id
     //       }
     //     }
     //   }).then( () => {
     //     // this.getPrefixos();
-    //     this.getItems("prefixos");
+    //     // this.getItems(item.type);
+    //     this.items[item.type].splice(
+    //       this.items[item.type].indexOf(item), 1);
+    //     this.generateDomains();
     //   });
     // },
-    // deleteSufixo(sufixo) {
-    //   // this.sufixos.splice(this.sufixos.indexOf(sufixo), 1);
-
-    //   // o deleteItem retorna um Boolean, logo não tem objeto associado.
-    //   axios({
+    // getItems(type) {
+    //   return axios({
     //     url: baseApiUrl,
     //     method: "post",
     //     data: {
     //       query: `
-    //         mutation ($id: Int) {
-    //           deleted: deleteItem(id: $id) 
-    //         } 
-    //       `,
-    //       variables: {
-    //         id: sufixo.id
-    //       }
-    //     }
-    //   }).then( () => {
-    //     // this.getSufixos();
-    //     this.getItems("sufixos");
-    //   });
-    // },
-    getItems(type) {
-      return axios({
-        url: baseApiUrl,
-        method: "post",
-        data: {
-          query: `
-            query ($type: String) {
-              itens: items (type: $type) {
-                id
-                type
-                description
-              }
-            }
-          `,
-          variables: {
-            type
-          }
-        }
-      }).then(response => {
-        const query = response.data;
-        this.items[type] = query.data.itens;
-        // this.items.prefixos = query.data.prefixes;
-        // this.prefixos = query.data.prefixes.map(prefix => prefix.description);
-        // // eslint-disable-next-line
-        // console.log(query.data.itens);
-      });
-    },
-    // getPrefixos() {
-    //   axios({
-    //     url: baseApiUrl,
-    //     method: "post",
-    //     data: {
-    //       query: `
-    //       {
-    //         prefixes: items (type: "prefix") {
-    //           id
-    //           type
-    //           description
-    //         }
-    //       }
-    //     `
-    //     }
-    //   }).then(response => {
-    //     const query = response.data;
-    //     this.items.prefixos = query.data.prefixes;
-    //     // this.prefixos = query.data.prefixes.map(prefix => prefix.description);
-    //     // // eslint-disable-next-line
-    //     // console.log(query.data);
-    //   });
-    // },
-    // getSufixos() {
-    //   axios({
-    //     url: baseApiUrl,
-    //     method: "post",
-    //     data: {
-    //       query: `
-    //         {
-    //           sufixes: items (type: "sufix") {
+    //         query ($type: String) {
+    //           itens: items (type: $type) {
     //             id
     //             type
     //             description
     //           }
     //         }
-    //       `
+    //       `,
+    //       variables: {
+    //         type
+    //       }
     //     }
     //   }).then(response => {
     //     const query = response.data;
-    //     this.items.sufixos = query.data.sufixes;
+    //     this.items[type] = query.data.itens;
+    //     // this.items.prefixos = query.data.prefixes;
+    //     // this.prefixos = query.data.prefixes.map(prefix => prefix.description);
+    //     // // eslint-disable-next-line
+    //     // console.log(query.data.itens);
     //   });
-    // }
-    generateDomains() {
-      axios({
-				url: baseApiUrl,
-				method: "post",
-				data: {
-					query: `
-						mutation {
-							domains: generateDomains {
-								name
-                checkout
-                available 
-							}
-						}
-					`
-				}
-			}).then( response => {
-				const query = response.data;
-				this.domains = query.data.domains;
-			});
-
-      // --- código movido para o servidor (server.js) em server
-      // // sempre que prefixos ou sufixos forem alterados, será invocado essa função.
-      // this.domains = [];
-      // for (const prefix of this.items.prefixos) {
-      //   for (const sufix of this.items.sufixos) {
-      //     const name = prefix.description + sufix.description;
-      //     const url = name.toLowerCase();
-      //     const checkout = `https://checkout.hostgator.com.br/?a=add&sld=${url}&tld=.com.br`;
-      //     this.domains.push({
-      //       name,
-      //       checkout
-      //     });
-      //   }
-      // }
-    }
+    // },
+    // generateDomains() {
+    //   axios({
+		// 		url: baseApiUrl,
+		// 		method: "post",
+		// 		data: {
+		// 			query: `
+		// 				mutation {
+		// 					domains: generateDomains {
+		// 						name
+    //             checkout
+    //             available 
+		// 					}
+		// 				}
+		// 			`
+		// 		}
+		// 	}).then( response => {
+		// 		const query = response.data;
+		// 		this.domains = query.data.domains;
+		// 	});
+    // },
   },
-  // computed: {
+  computed: {
+    ...mapState(["items", "domains"])
+    // items() {
+    //   // eslint-disable-next-line
+    //   console.log("items >", this.$store.state.items);
+    //   return this.$store.state.items;
+    // },
+    // domains() {
+    //   // eslint-disable-next-line
+    //   console.log("domains >", this.$store.state.domains);
+    //   return this.$store.state.domains;
+    // }
     // domains() {
       // // sempre que prefixos ou sufixos forem alterados, será invocado essa função.
       // const domains = [];
@@ -366,76 +229,23 @@ export default {
       // }
       // return domains;
     // }
-  // },
+  },
   created() {
     // é preciso fazer via Promise, pois os getItems são assícronos, daí a necessidade da
     // espera deles processarem para se chamar a generateDomains. Em getItems incluir o 
     // o return em axios para que a Promise seja retornada
-    Promise.all([
-			this.getItems("prefixos"),
-      this.getItems("sufixos"),
-		]).then(() => {
-			this.generateDomains();
-		});
 
-    // this.getItems("prefixos");
-    // this.getItems("sufixos");
+    // Obs: ao mover para o store.js, ao navegar para a consulta do domínio e voltar
+    // o sistema não fará novamente a consulta ao servidor, ganhando performance uma vez
+    // que o controle está na store
 
-    // this.getPrefixos();
-    // this.getSufixos();
-    // axios({
-    //   url: baseApiUrl,
-    //   method: "post",
-    //   data: {
-    //     query: `
-    //       {
-    //         prefixes: items (type: "prefix") {
-    //           id
-    //           type
-    //           description
-    //         }
-    //         sufixes: items (type: "sufix") {
-    //           description
-    //         }
-    //       }
-    //     `
-    //   }
-    // }).then(response => {
-    //   const query = response.data;
-    //   this.prefixos = query.data.prefixes.map(prefix => prefix.description);
-    //   this.sufixos = query.data.sufixes.map(sufix => sufix.description);
-
-    //   // // eslint-disable-next-line
-    //   // console.log(query.data);
-    // });
+    // Promise.all([
+		// 	this.getItems("prefixos"),
+    //   this.getItems("sufixos"),
+		// ]).then(() => {
+		// 	this.generateDomains();
+		// });
   }
-  // created() {
-  //   axios({
-  //     url: baseApiUrl,
-  //     method: "post",
-  //     data: {
-  //       query: `
-  //         {
-  //           prefixes {
-  //             id
-  //             type
-  //             description
-  //           }
-  //           sufixes {
-  //             description
-  //           }
-  //         }
-  //       `
-  //     }
-  //   }).then(response => {
-  //     const query = response.data;
-  //     // this.prefixos = query.data.prefixes.map(prefix => prefix.description);
-  //     // this.sufixos = query.data.sufixes.map(sufix => sufix.description);
-
-  //     // eslint-disable-next-line
-  //     console.log(query.data);
-  //   });
-  // },
 };
 </script>
 
