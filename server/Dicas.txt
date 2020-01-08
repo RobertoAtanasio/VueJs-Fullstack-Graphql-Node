@@ -1,3 +1,12 @@
+-----------------------------------------------------------------------------------------------
+Caso exista algum processo executando na porta 8080, segue os comando para excluir o processo.
+Abrir o CMD com opção de administrador:
+
+	netstat -ano | findstr 8080
+
+	taskkill /F /pid 3744
+-----------------------------------------------------------------------------------------------
+
 node server         --> executa o servidor backend
 
 Em server: 
@@ -13,9 +22,10 @@ Obs.: com isso, foi criado um package.json em server.
 Crias as dependências:
 
     npm install apollo-server --save    --> biblioteca para se utilizar o graphql no projeto
-
     npm install graphql --save
-
+    npm install axios --save
+    npm install pg --save               --> para o PostgreSQL
+    
 Na pasta server, testar: node server    --> aparecerá a descrição da Function construtora AplolloServer
 
 É preciso a definiçao do schema
@@ -44,3 +54,36 @@ Como enviar dados para o backend:
 
 Para verificar se um determinado domínio está disponível (DNS), vamos utilizar
 um pacote do NODE chamado DNS, importando-o em server.js
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+Conectando com o Banco de dados:
+
+C:\Program Files\PostgreSQL\10\bin		// deve está adicionada na variável global do sistema
+
+abrir o banco default: 
+	psql -h localhost -U postgres
+	psql -U postgres
+	
+create database knowledge;				cria o banco de dados
+
+\c knowledge_final						conectar com o banco
+
+\dt										lista as tabelas criadas
+
+SELECT * FROM pg_user;
+
+SELECT * FROM pg_tables;
+
+Sair da ferramenta com \q
+
+---
+
+create database namegator;
+
+Após a criação do arquivo create.PostgreSQL,
+executar em C:\Vue-curso\fullstack_vue_graphql_node>
+    psql -d namegator -f database/create.sql            ??? não funcionou comigo!
+
+----------------------------------------------------------------------------------------------------------------------------------
+

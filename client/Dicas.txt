@@ -1,3 +1,4 @@
+-----------------------------------------------------------------------------------------------
 Caso exista algum processo executando na porta 8080, segue os comando para excluir o processo.
 Abrir o CMD com opção de administrador:
 
